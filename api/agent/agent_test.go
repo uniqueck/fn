@@ -298,11 +298,9 @@ func TestImageCache(t *testing.T) {
 	url := "http://127.0.0.1:8080/r/" + app.Name + path
 	payload := "payload"
 	typ := "async"
-	format := "http"
 	contentType := "suberb_type"
 	contentLength := strconv.FormatInt(int64(len(payload)), 10)
 	config := map[string]string{
-		"FN_FORMAT":   format,
 		"FN_APP_NAME": app.Name,
 		"FN_PATH":     path,
 		"FN_MEMORY":   strconv.Itoa(memory),
@@ -324,7 +322,6 @@ func TestImageCache(t *testing.T) {
 		Config:      config,
 		Headers:     headers,
 		Type:        typ,
-		Format:      format,
 		Timeout:     timeout,
 		IdleTimeout: idleTimeout,
 		Memory:      memory,
