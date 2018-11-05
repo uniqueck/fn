@@ -43,7 +43,6 @@ type dockerClient interface {
 	InspectImage(ctx context.Context, name string) (*docker.Image, error)
 	ListImages(ctx context.Context) ([]docker.APIImages, error)
 	RemoveImage(id string, opts docker.RemoveImageOptions) error
-	InspectContainerWithContext(container string, ctx context.Context) (*docker.Container, error)
 	Stats(opts docker.StatsOptions) error
 	Info(ctx context.Context) (*docker.DockerInfo, error)
 	DiskUsage(docker.DiskUsageOptions) (*docker.DiskUsage, error)
@@ -309,7 +308,7 @@ func (d *dockerWrap) LoadImages(ctx context.Context, filePath string) error {
 func (d *dockerWrap) ListImages(ctx context.Context) ([]docker.APIImages, error) {
 	ctx, span := trace.StartSpan(ctx, "list_docker_images")
 	defer span.End()
-	return d.docker.ListImages(docker.ListImagesOptions{All: false})
+	return d.docker.ListImages(docker.ListImagesOptions{All: false, Context: ctx})
 }
 
 func (d *dockerWrap) Info(ctx context.Context) (info *docker.DockerInfo, err error) {
@@ -398,7 +397,7 @@ func (d *dockerWrap) RemoveImage(image string, opts docker.RemoveImageOptions) (
 
 	logger := common.Logger(ctx).WithField("docker_cmd", "RemoveImage")
 	err = d.retry(ctx, logger, func() error {
-		err = d.RemoveImage(image, opts)
+		err = d.docker.RemoveImage(image)
 		return err
 	})
 	return err
